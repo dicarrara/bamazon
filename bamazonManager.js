@@ -57,11 +57,73 @@ function managerOptions() {
 managerOptions();
 
 function viewProduct() {
-  connection.query(
-    "SELECT id, product_name, price, stock_quantity FROM products",
-    function(error, results) {
-      if (error) throw error;
-      console.table(results);
-    }
-  );
+  connection.query("SELECT * FROM products", function(error, results) {
+    if (error) throw error;
+    console.table(results);
+    managerOptions();
+  });
+}
+
+function viewLowInventory() {
+  connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(
+    error,
+    results
+  ) {
+    if (error) throw error;
+    console.table(results);
+    managerOptions();
+  });
+}
+
+function addToInventory() {
+  inquirer
+    .prompt([
+      {
+        name: "id",
+        type: "input",
+        message: " Enter the Item ID of the product"
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: " Enter quantity you wish to add"
+      }
+    ])
+    .then(function(answer) {
+      connection.query(
+        "SELECT * FROM products WHERE ?",
+        { id: answer.id },
+        function(err, res) {
+          let itemQuantity = res[0].stock_quantity + parseInt(answer.quantity);
+
+          connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+              {
+                stock_quantity: itemQuantity
+              },
+              {
+                id: answer.id
+              }
+            ],
+            function(err, results) {
+              if (err) throw err;
+            }
+          );
+
+          connection.query(
+            "SELECT * FROM products WHERE ?",
+            { id: answer.id },
+            function(err, results) {
+                console.table(results);
+              managerOptions();
+            }
+          );
+        }
+      );
+    });
+}
+
+function addNewProduct () {
+    
 }
