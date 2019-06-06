@@ -1,5 +1,6 @@
-var mysql = require("mysql");
-var inquirer = require("inquirer");
+var mysql = require('mysql');
+var inquirer = require('inquirer');
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -20,7 +21,7 @@ function afterConnection() {
     results
   ) {
     if (error) throw error;
-    console.log(results);
+    console.table(results);
     questionToUser();
   });
 }
