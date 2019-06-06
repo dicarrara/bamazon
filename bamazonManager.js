@@ -44,7 +44,6 @@ function managerOptions() {
 
         case "Add New Product":
           addNewProduct();
-          connection.end();
           break;
 
         case "Nothing":
@@ -115,7 +114,7 @@ function addToInventory() {
             "SELECT * FROM products WHERE ?",
             { id: answer.id },
             function(err, results) {
-                console.table(results);
+              console.table(results);
               managerOptions();
             }
           );
@@ -124,6 +123,47 @@ function addToInventory() {
     });
 }
 
-function addNewProduct () {
-    
+function addNewProduct() {
+  inquirer
+    .prompt([
+      {
+        name: "product",
+        type: "input",
+        message: "Enter new product name"
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "Enter department name"
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "Enter price"
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: " Enter quantity you wish to add"
+      }
+    ])
+    .then(function(answer) {
+      connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: answer.product,
+          department_name: answer.department,
+          price: answer.price,
+          stock_quantity: answer.quantity
+        },
+        function(err, res) {
+          if (err) throw err;
+          connection.query("SELECT * FROM products", function(err, results) {
+            if (err) throw err;
+            console.table(results);
+            managerOptions();
+          });
+        }
+      );
+    });
 }
