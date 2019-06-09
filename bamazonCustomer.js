@@ -16,10 +16,7 @@ connection.connect(function(error) {
 });
 
 function afterConnection() {
-  connection.query("SELECT id, product_name, price FROM products", function(
-    error,
-    results
-  ) {
+  connection.query("SELECT id, product_name, price FROM products", function(error,results) {
     if (error) throw error;
     console.table(results);
     questionToUser();
